@@ -113,6 +113,24 @@ public:
 
     DownloadResult blockingDownload (juce::URL url, juce::String extraHeaders = {});
 
+    juce::int64 getRemainingDownloadsCurrentSum()
+    {
+        juce::int64 currentSum = 0;
+        for (auto& download : downloads)
+            currentSum += download->current_;
+        
+        return currentSum;
+    }
+    
+    juce::int64 getRemainingDownloadsTotalSum()
+    {
+        juce::int64 totalSum = 0;
+        for (auto& download : downloads)
+            totalSum += download->total_;
+        
+        return totalSum;
+    }
+    
 private:
     //==============================================================================
     /** Manages a download on a background thread */
@@ -138,6 +156,8 @@ private:
         bool started = false, async = true;
         juce::uint32 lastProgress = 0;
         juce::int64 lastBytesSent = 0;
+        juce::int64 current_ = 0;
+        juce::int64 total_ = 0;
 
         //==============================================================================
         JUCE_DECLARE_WEAK_REFERENCEABLE (Download)
