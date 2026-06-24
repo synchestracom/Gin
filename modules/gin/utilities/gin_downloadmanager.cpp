@@ -300,6 +300,8 @@ bool DownloadManager::Download::tryDownload()
 
 void DownloadManager::Download::updateProgress (juce::int64 current, juce::int64 total, bool forceNotification)
 {
+    current_ = current;
+    total_ = total;
     if (progressCallback)
     {
         // Update progress no more than once per second
