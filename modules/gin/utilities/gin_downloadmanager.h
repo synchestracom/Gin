@@ -131,6 +131,10 @@ public:
         return totalSum;
     }
     
+    // For synchestra, reset 
+    std::atomic<juce::uint64> bytesToDownload = 0;
+    std::atomic<juce::uint64> bytesDownloaded = 0;
+    
 private:
     //==============================================================================
     /** Manages a download on a background thread */
@@ -171,12 +175,13 @@ private:
     int nextId = 0;
     int connectTimeout = 30 * 1000;
     int shutdownTimeout = 30 * 1000;
-    int retryLimit = 0, downloadIntervalMS = 1000, downloadBlockSize = 128 * 1000;
+    int retryLimit = 15, downloadIntervalMS = 1000, downloadBlockSize = 128 * 1000;
     juce::Thread::Priority priority = juce::Thread::Priority::normal;
 
-    double retryDelay = 0.0;
+    double retryDelay = 1.0;
     int runningDownloads = 0, maxDownloads = 100;
     juce::OwnedArray<Download, juce::CriticalSection> downloads;
+    
     std::function<void ()> queueFinishedCallback;
     bool gzipDeflate = true;
     std::atomic<bool> pause { false };

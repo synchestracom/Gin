@@ -149,8 +149,13 @@ void DownloadManager::downloadFinished (Download* download)
 
     triggerNextDownload();
 
-    if (downloads.size() == 0 && queueFinishedCallback)
-        queueFinishedCallback();
+    if (downloads.size() == 0)
+    {
+        bytesToDownload.store(0);
+        bytesDownloaded.store(0);
+        if (queueFinishedCallback)
+            queueFinishedCallback();
+    }
 }
 
 void DownloadManager::pauseDownloads (bool p)
@@ -251,6 +256,7 @@ bool DownloadManager::Download::tryDownload()
                 {
                     os.write (buffer, size_t (read));
                     downloaded += read;
+                    owner.bytesDownloaded.fetch_add(read);
                     result.ok = (is->isExhausted() || downloaded == totalLength) && result.httpCode == 200;
 
                     updateProgress (downloaded, totalLength, false);
